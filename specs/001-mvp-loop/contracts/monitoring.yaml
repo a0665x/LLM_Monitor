@@ -1,0 +1,213 @@
+openapi: 3.0.3
+info:
+  title: LLM Monitor MVP Monitoring API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8081
+paths:
+  /health/ollama:
+    get:
+      summary: Check Ollama model readiness
+      responses:
+        "200":
+          description: Model ready
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OllamaStatus"
+        "424":
+          description: Model missing or unreachable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /health/camera:
+    get:
+      summary: Check /dev/video0 status
+      responses:
+        "200":
+          description: Camera healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CameraStatus"
+        "503":
+          description: Camera offline or stalled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /prompts/current:
+    get:
+      summary: Fetch current risk prompt
+      responses:
+        "200":
+          description: Current prompt details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskPrompt"
+  /prompts:
+    post:
+      summary: Update risk prompt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text, updated_by]
+              properties:
+                text:
+                  type: string
+                  maxLength: 1000
+                updated_by:
+                  type: string
+      responses:
+        "200":
+          description: Prompt saved and version incremented
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskPrompt"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /frames/latest:
+    get:
+      summary: Retrieve the latest captured frame metadata
+      responses:
+        "200":
+          description: Frame metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FrameCapture"
+  /alerts/ack:
+    post:
+      summary: Acknowledge the active alert
+      responses:
+        "204":
+          description: Alert reset
+  /qa:
+    post:
+      summary: Ask LLaVA about the latest frame
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question]
+              properties:
+                question:
+                  type: string
+                  maxLength: 500
+      responses:
+        "200":
+          description: Answer returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QAResponse"
+        "429":
+          description: Tester throttled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Ollama unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    RiskPrompt:
+      type: object
+      required: [version, text, updated_at]
+      properties:
+        version:
+          type: integer
+        text:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+          nullable: true
+    FrameCapture:
+      type: object
+      required: [id, timestamp, source, preview_url, prompt_version, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        source:
+          type: string
+          enum: [dev-video0, mock-file]
+        preview_url:
+          type: string
+          description: Signed URL or base64 data reference
+        prompt_version:
+          type: integer
+        status:
+          type: string
+          enum: [pending, analyzed, error]
+    QAResponse:
+      type: object
+      required: [question, answer, latency_ms, model]
+      properties:
+        question:
+          type: string
+        answer:
+          type: string
+        latency_ms:
+          type: integer
+        model:
+          type: string
+        frame_id:
+          type: string
+          format: uuid
+        error:
+          type: string
+          nullable: true
+    OllamaStatus:
+      type: object
+      required: [model, ready]
+      properties:
+        model:
+          type: string
+        ready:
+          type: boolean
+        digest:
+          type: string
+        message:
+          type: string
+    CameraStatus:
+      type: object
+      required: [device, ready, fps]
+      properties:
+        device:
+          type: string
+        ready:
+          type: boolean
+        fps:
+          type: number
+        message:
+          type: string
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
