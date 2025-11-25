@@ -32,7 +32,33 @@ The app will be available at [http://localhost:7860](http://localhost:7860).
 
 See [User_Manual.md](User_Manual.md) for detailed local installation instructions.
 
-## 🖥️ User Interface Guide
+## � RTSP Architecture
+
+The application uses an RTSP-based streaming architecture for robust video delivery:
+
+```
+/dev/video0 → FFmpeg → MediaMTX (RTSP Server) → Python App → WebUI
+```
+
+**Components:**
+- **FFmpeg**: Captures from `/dev/video0` and encodes video (H.264)
+- **MediaMTX**: Lightweight RTSP server hosting the stream at `rtsp://localhost:8554/live/stream`
+- **OpenCV**: Consumes the RTSP stream for AI analysis
+
+**Benefits:**
+- Decouples video capture from processing
+- Allows multiple consumers (e.g., VLC, other apps) to access the same stream
+- Better error handling and recovery
+
+**Testing the RTSP Stream:**
+You can verify the stream is working with VLC or ffplay:
+```bash
+vlc rtsp://localhost:8554/live/stream
+# or
+ffplay rtsp://localhost:8554/live/stream
+```
+
+## �🖥️ User Interface Guide
 
 The interface is designed for simplicity and control:
 
