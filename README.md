@@ -6,7 +6,7 @@
 
 ## 🌟 Features
 
-- **Real-time Monitoring**: Continuous video stream from your webcam (`/dev/video0`).
+- **Real-time Monitoring**: Continuous video stream via RTSP (default: `/dev/video0` -> `rtsp://localhost:8554/live/stream`).
 - **AI Risk Detection**: Uses Vision Language Models (like `minicpm-v:8b`) to analyze frames against a custom "Risk Prompt".
 - **Visual Alerts**: Flashes red and displays warnings when a risk is detected.
 - **Privacy First**: All inference runs locally on your device (e.g., NVIDIA Jetson).

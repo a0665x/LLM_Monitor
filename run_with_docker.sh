@@ -49,9 +49,18 @@ echo "Press Ctrl+C to stop."
 # Create temp directory if it doesn't exist
 mkdir -p temp
 
-docker run --rm -it \
-    --network="host" \
-    --device=/dev/video0:/dev/video0 \
-    -v "$(pwd)/temp:/app/temp" \
+docker run -d \
     --name llm_monitor_app \
+    --network host \
+    --device /dev/video0:/dev/video0 \
+    -v $(pwd)/src:/app/src \
+    -v $(pwd)/data:/app/data \
+    -v $(pwd)/temp:/app/temp \
+    -e USE_MOCK_CAMERA=false \
+    -e OLLAMA_HOST=http://localhost:11434 \
+    -p 7860:7860 \
+    -p 8554:8554 \
     llm-monitor
+
+echo "Container started. Access the app at http://localhost:7860"
+echo "RTSP Stream available at rtsp://localhost:8554/live/stream"

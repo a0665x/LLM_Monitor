@@ -41,8 +41,18 @@ class CameraSource:
 
 
 class OpenCVCamera(CameraSource):
-    def __init__(self, device: str = "/dev/video0", width: int = 640, height: int = 480, fps: int = 10) -> None:
-        self.device = device
+    def __init__(self, device: str | int | None = None, width: int = 640, height: int = 480, fps: int = 10) -> None:
+        # Prioritize argument, then env var, then default
+        if device is None:
+            import os
+            env_url = os.getenv("CAMERA_URL")
+            if env_url:
+                self.device = env_url
+            else:
+                self.device = "/dev/video0"
+        else:
+            self.device = device
+            
         self.width = width
         self.height = height
         self.fps = fps
@@ -53,10 +63,20 @@ class OpenCVCamera(CameraSource):
             return
         if cv2 is None:
             raise CameraError("OpenCV is not available; install opencv-python")
-        cap = cv2.VideoCapture(self.device)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
-        cap.set(cv2.CAP_PROP_FPS, self.fps)
+            
+        # Handle numeric device index if string is a number
+        device_to_open = self.device
+        if isinstance(self.device, str) and self.device.isdigit():
+            device_to_open = int(self.device)
+            
+        cap = cv2.VideoCapture(device_to_open)
+        
+        # Only set props for local devices (not RTSP streams usually)
+        if not str(self.device).startswith("rtsp://"):
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+            cap.set(cv2.CAP_PROP_FPS, self.fps)
+            
         if not cap.isOpened():
             raise CameraError(f"Unable to open camera device {self.device}")
         self._capture = cap

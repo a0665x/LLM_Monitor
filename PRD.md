@@ -34,7 +34,8 @@ The **LLM Monitor** is an AI-powered application designed to assist caregivers i
 ### 4.1 Technology Stack
 - **Language**: Python 3.10+
 - **UI Framework**: Gradio 4.x
-- **Computer Vision**: OpenCV (cv2)
+- **Computer Vision**: OpenCV (cv2) consuming RTSP stream
+- **Streaming**: FFmpeg + MediaMTX (RTSP Server)
 - **AI Inference**: Ollama (running Vision Language Models like `minicpm-v:8b`)
 - **Communication**: HTTP (Gradio), REST API (Ollama)
 
