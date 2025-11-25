@@ -1,0 +1,6 @@
+hls: no
+webrtc: no
+srt: no
+playback: no
+paths:
+  live/stream: {}
