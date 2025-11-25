@@ -49,3 +49,10 @@ The interface is designed for simplicity and control:
 - [User Manual](User_Manual.md)
 - [Product Requirements (PRD)](PRD.md)
 - [Developer Guidelines](AGENTS.md)
+
+## 🔮 Future Roadmap
+
+- [ ] **SMS Notifications via Twilio**: Integrate Twilio API to send real-time SMS alerts to caregivers when high-risk events are detected.
+- [ ] **Audio Alerts**: Implement browser-based or system-level sound alarms (e.g., sirens or beeps) to accompany visual red-screen alerts.
+- [ ] **Multi-Camera / Multi-Modal Support**: Expand architecture to support multiple video feeds simultaneously or integrate audio analysis (e.g., cry detection) alongside vision.
+- [ ] **Secure Remote Access (HTTPS Tunneling)**: Enable secure remote monitoring from outside the local network using tunneling services (like ngrok or Cloudflare Tunnel) or a dedicated reverse proxy.
