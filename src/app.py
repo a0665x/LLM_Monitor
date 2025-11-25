@@ -219,9 +219,9 @@ class MonitoringApp:
         # On-Screen Data Overlay
         if self.auto_analyze:
             # Draw Binary Risk Status
-            status_text = "⚠️ RISK" if self.current_risk_binary else "✓ SAFE"
+            status_text = "RISK" if self.current_risk_binary else "SAFE"
             status_color = (0, 0, 255) if self.current_risk_binary else (0, 255, 0)
-            cv2.putText(img, status_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, status_color, 3)
+            cv2.putText(img, status_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, status_color, 2)
             
             # Draw LLM Explanation
             if self.current_explanation:

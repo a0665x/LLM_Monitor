@@ -2,7 +2,7 @@
 
 **LLM Monitor** is an AI-powered application designed to assist caregivers in monitoring infants (or other subjects) using a local camera feed and Large Multimodal Models (LMMs). It runs entirely locally using Ollama, ensuring privacy and low latency.
 
-![LLM Monitor UI](annotated_ui.jpg)
+![LLM Monitor UI](llm_monitor_ui.png)
 
 ## 🌟 Features
 
