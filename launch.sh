@@ -1,18 +1,17 @@
 #!/bin/bash
 set -e
 
-# Check if Ollama is running
-if ! pgrep -x "ollama" > /dev/null; then
-    echo "Ollama is not running. Please start Ollama first."
+# Check if Ollama is running (check host API endpoint)
+OLLAMA_HOST="${OLLAMA_HOST:-http://localhost:11434}"
+if ! curl -s "$OLLAMA_HOST/api/tags" > /dev/null 2>&1; then
+    echo "Ollama is not running at $OLLAMA_HOST. Please start Ollama first."
     exit 1
 fi
 
-# Check if model exists
-MODEL="llava:13b-v1.6-vicuna-q4_0"
-if ! ollama list | grep -q "$MODEL"; then
-    echo "Model $MODEL not found. Pulling it now..."
-    ollama pull "$MODEL"
-fi
+echo "Ollama detected at $OLLAMA_HOST"
+
+# Check if model exists (skip in Docker, assume model is available)
+# Models are managed on the host, not in the container
 
 # Start RTSP Server (MediaMTX)
 echo "Starting RTSP Server..."
